@@ -1,0 +1,258 @@
+<html>
+<head>
+<style>
+.square{
+border-radius:15%;
+width:200px;
+height:200px;
+display:block;
+margin:15px;
+opacity:0.5;
+text-align:center;
+box-sizing:border-box;
+padding:75px;
+font-size:25px;
+font-weight:bold;
+color:white;
+}
+#squares{
+display:none;
+}
+#square1{
+background:red;
+float:left;
+
+}
+#square2{
+background:green;
+float:left;
+}
+#square3{
+background:blue;
+float:left;
+clear:both;
+
+}
+#square4{
+background:black;
+float:left;
+
+}
+.op{
+
+display:none;
+}
+#button{
+	width:200px;
+	height:100px;
+	background:yellow;
+	border-radius:15px;
+padding:25px;
+display:flex;
+justify-content:center;
+align-self:center;
+align-items:center;
+}
+#flex{
+display:flex;
+justify-content:center;
+align-self:center;
+align-items:center;
+font-size:35px;
+width:100%;
+height:100%;
+}
+</style>
+
+</head>
+<body>
+<div id="squares">
+	<p id="difficult">Сложность игрока easy</p>
+	<div id="square1" class="square">A</div>
+	<div id="square2" class="square">B</div>
+	<div id="square3" class="square">C</div>
+	<div id="square4" class="square">D</div>
+</div>
+
+<audio id="aqz1" src="A.mp3"></audio>
+<audio id="aqz2" src="B.mp3"></audio>
+<audio id="aqz3" src="C.mp3"></audio>
+<audio id="aqz4" src="D.mp3"></audio>
+<div id="flex">
+<div onClick="myGame()" id="button">
+начать игру
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<script>
+	new Vue({
+		mounted(){
+			Vue.config.devtools=true
+		}
+	})
+	var delay=0
+	var userinputpossible=false
+
+	document.onloading=function(){
+		playSound()
+	}
+	var compSteps=[]
+	var cntr=0
+	var difficult="easy"
+	var steps=0
+	var playerSteps=new Array()
+	async function playSound(aq) {
+		var aqz=document.getElementById("aqz" + String(aq))	  
+		try {
+		    await aqz.play();
+		  } catch(err) {
+		    console.log(err)
+		  }
+	}
+	async function myDifficult(){
+		userinputpossible=false		
+		compSteps=new Array()
+		
+		if (difficult==="easy"){
+			delay=1500
+			steps=2
+		}
+		else if (difficult==="middle"){
+			delay=1000
+			steps=4
+		}
+		else if (difficult==="hard"){
+			delay=440
+			steps=8
+		}
+		
+		for(let i=0;i<5;i++){
+			let myrandom=Math.floor(Math.random() * (5 - 1) + 1)
+			compSteps.push(myrandom)
+		}
+		var a = document.getElementById("square" + String(compSteps[0]))
+		var c = document.getElementById("square" + String(compSteps[1]))
+		var d = document.getElementById("square" + String(compSteps[2]))
+		var e = document.getElementById("square" + String(compSteps[3]))
+		var f = document.getElementById("square" + String(compSteps[4]))
+		a.style.cssText = "opacity:1;";
+		playSound(compSteps[0])
+		setTimeout(function(){
+			a.style.cssText = "opacity:0.5;";
+
+			c.style.cssText = "opacity:1;";
+			playSound(compSteps[1])
+		},delay)
+
+
+		setTimeout(function(){
+			c.style.cssText = "opacity:0.5;";
+
+			d.style.cssText = "opacity:1;";
+			playSound(compSteps[2])
+		},delay * 2)
+
+		setTimeout(function(){
+			d.style.cssText = "opacity:0.5;";
+
+			e.style.cssText = "opacity:1;";
+			playSound(compSteps[3])
+		},delay * 3)
+
+		setTimeout(function(){
+			e.style.cssText = "opacity:0.5;";
+
+			f.style.cssText = "opacity:1;";
+			playSound(compSteps[4])
+		},delay * 4)
+
+		setTimeout(function(){
+			f.style.cssText = "opacity:0.5;";
+			alert("ходите")
+			console.log(delay*5)
+			userinputpossible=true
+		},delay * 5)
+
+		
+	}
+		var b = document.getElementById("squares")
+		b.addEventListener("click",function(e){
+		if(userinputpossible){
+			playSound()
+			
+			if(e.target.id==="square1"){
+				var playerStep=1
+			}
+			else if(e.target.id==="square2"){
+				var playerStep=2
+			}
+			else if(e.target.id==="square3"){
+				var playerStep=3
+			}
+			else if(e.target.id==="square4"){
+				var playerStep=4
+			}
+			document.getElementById("square" + String(playerStep)).style.cssText="opacity:1;";
+			setTimeout(function(){
+				playSound(playerStep)				
+				document.getElementById("square" + String(playerStep)).style.cssText="opacity:0.5;";
+				console.log(delay)
+			},delay)
+			
+				if(cntr===0){
+					playerSteps=new Array()
+					playerSteps.push(playerStep)
+				}else{
+					playerSteps.push(playerStep)
+				}
+				if(playerSteps[cntr] === compSteps[cntr]){
+					console.log("блок 2")
+					cntr++
+					delete compSteps
+					delete playerSteps
+					alert("нажимайте дальше")
+					console.log(playerSteps)
+					console.log(cntr)
+					if(compSteps.length===playerSteps.length){
+						console.log("блок 1")
+						cntr=0
+						delete compSteps
+						if(difficult==="easy"){
+							difficult="middle"
+						}
+						else if(difficult==="middle"){
+							difficult="hard"
+						}
+						else if(difficult==="hard"){
+							difficult="hard"
+						}
+						document.getElementById("difficult").textContent=`Сложность игрока ${difficult}`
+						alert(`вы переходите на сложность ${difficult}`)
+						myDifficult()
+					}
+				}
+				else{
+					difficult="easy"
+					document.getElementById("difficult").textContent=difficult
+					console.log("блок 3")
+					cntr=0
+					alert("не угадали")
+					myDifficult()
+				}
+			
+		}})
+
+	function myGame(){
+		document.getElementById("flex").style.display="none"
+		document.getElementById("squares").style.display="block"
+		myDifficult()
+	}
+	function mynewfunction(i,delay){
+	
+	var a = document.getElementById("square" + String(i))
+	setTimeout(function(){},delay)
+	a.style.cssText = "color:yellow;";
+	}
+</script>
+</body>
+</html>
